@@ -1,6 +1,6 @@
 # dataproc-java-submitter
 
-[![CircleCI](https://circleci.com/gh/spotify/dataproc-java-submitter/tree/master.svg?style=svg)](https://circleci.com/gh/spotify/dataproc-java-submitter)
+[![CircleCI](https://circleci.com/gh/spotify/dataproc-java-submitter/tree/master.svg?style=shield)](https://circleci.com/gh/spotify/dataproc-java-submitter)
 [![License](https://img.shields.io/github/license/spotify/dataproc-java-submitter.svg)](LICENSE.txt)
 
 A small java library for submitting Hadoop jobs to [Google Cloud Dataproc] from Java.
