@@ -94,13 +94,6 @@ class Jobs {
 
     LOG.info("Staging files...");
 
-    if (mainClass.isPresent()) {
-      hadoopJob.setMainClass(mainClass.get());
-    } else if (mainJarFileUri.isPresent()) {
-      final String stagedMainJarFileUri = getStagedURI(cluster, mainJarFileUri.get());
-      hadoopJob.setMainJarFileUri(stagedMainJarFileUri);
-    }
-
     final List<String> stagedJarFileUris;
     try {
       stagedJarFileUris = FJP.submit(
@@ -121,6 +114,14 @@ class Jobs {
           .get();
     } catch (InterruptedException | ExecutionException e) {
       throw Throwables.propagate(e);
+    }
+
+    if (mainClass.isPresent()) {
+      hadoopJob.setMainClass(mainClass.get());
+    } else if (mainJarFileUri.isPresent()) {
+      final String stagedMainJarFileUri = getStagedURI(cluster, mainJarFileUri.get());
+      hadoopJob.setMainJarFileUri(stagedMainJarFileUri);
+      stagedJarFileUris.add(stagedMainJarFileUri);
     }
 
     LOG.info("Done staging, submitting job");
@@ -159,8 +160,8 @@ class Jobs {
     LOG.debug("Staging {} in GCS bucket {}", uri, configBucket);
 
     try {
-      InputStreamContent content = new InputStreamContent("application/octet-stream",
-                                                          new FileInputStream(local));
+      InputStreamContent content = new InputStreamContent(
+          "application/octet-stream", new FileInputStream(local));
       content.setLength(local.length()); // docs say that setting length improves upload perf
 
       StorageObject object = new StorageObject()
@@ -175,7 +176,7 @@ class Jobs {
     }
   }
 
-  public JobStatus stream(final String jobId, final OutputStream stream)
+  JobStatus stream(final String jobId, final OutputStream stream)
       throws ExecutionException, InterruptedException {
     final ExecutorService executorService = Executors.newSingleThreadExecutor();
 
@@ -193,7 +194,7 @@ class Jobs {
           }
         }
 
-        public JobStatus streamAndGetJobStatus() throws IOException, InterruptedException {
+        JobStatus streamAndGetJobStatus() throws IOException, InterruptedException {
           StorageObject currentObject = null;
           StorageObject nextObject = null;
 
