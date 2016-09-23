@@ -23,9 +23,10 @@ import com.google.common.base.Preconditions;
 
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
@@ -40,7 +41,7 @@ public class Job {
   private String[] shippedFiles;
   private String[] shippedJars;
   private String jobId;
-  private Properties properties;
+  private Map<String, String> properties;
 
   /**
    * Create a {@link Job} instance for executing the specified main class of the given jar.
@@ -53,7 +54,7 @@ public class Job {
    * @param properties properties overriding the Hadoop configuration settings
    */
   public Job(Optional<String> jarPath, Optional<String> mainClass, List<String> args, String[]
-      shippedFiles, String[] shippedJars, String jobId, Properties properties) {
+      shippedFiles, String[] shippedJars, String jobId, Map<String, String> properties) {
     this.jarPath = jarPath;
     this.mainClass = mainClass;
     this.args = args;
@@ -123,7 +124,7 @@ public class Job {
    * Properties overriding the Hadoop configuration settings
    * @return the properties
    */
-  public Properties getProperties() {
+  public Map<String, String> getProperties() {
     return properties;
   }
 
@@ -159,7 +160,7 @@ public class Job {
     private String[] shippedFiles;
     private String[] shippedJars;
     private String jobId;
-    private Properties properties = new Properties();
+    private Map<String, String> properties = new LinkedHashMap<>();
 
     /**
      * Set the path of the job jar.
@@ -219,11 +220,20 @@ public class Job {
     }
 
     /**
+     * Set property overriding the Hadoop configuration settings
+     * @return the builder instance
+     */
+    public Builder setProperty(String key, String value) {
+      this.properties.put(key, value);
+      return this;
+    }
+
+    /**
      * Set properties overriding the Hadoop configuration settings
      * @return the builder instance
      */
-    public Builder setProperties(Properties properties) {
-      this.properties = properties;
+    public Builder setProperties(Map<String, String> properties) {
+      this.properties.putAll(properties);
       return this;
     }
 

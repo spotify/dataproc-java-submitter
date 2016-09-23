@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -61,19 +62,19 @@ class DataprocClient {
     this.jobs = new Jobs(this);
   }
 
-  public String getProjectId() {
+  String getProjectId() {
     return projectId;
   }
 
-  public String getRegion() {
+  String getRegion() {
     return "global";
   }
 
-  public String getClusterId() {
+  String getClusterId() {
     return clusterId;
   }
 
-  public Clusters clusters() {
+  Clusters clusters() {
     return clusters;
   }
 
@@ -87,16 +88,21 @@ class DataprocClient {
 
   JobStatus submit(Job job) throws IOException {
     LOG.info("Submitting job to project:{} cluster:{}", projectId, clusterId);
-    clusterProperties.forEach((key, value) -> LOG.debug("Property {} = {}", key, value));
+
+    final Map<String, String> properties = new LinkedHashMap<>();
+    properties.putAll(clusterProperties);
+    properties.putAll(job.getProperties());
+    properties.forEach((key, value) -> LOG.debug("Property {} = {}", key, value));
 
     final List<String> shippedJars = asList(firstNonNull(job.getShippedJars(), new String[0]));
     final List<String> shippedFiles = asList(firstNonNull(job.getShippedFiles(), new String[0]));
 
+    job.getProperties();
     final com.google.api.services.dataproc.model.Job submittedJob =
         jobs.submit(
             job.getMainClass(),
             job.getJarPath(),
-            clusterProperties,
+            properties,
             shippedJars,
             shippedFiles,
             job.getArgs());

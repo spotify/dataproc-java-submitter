@@ -44,12 +44,36 @@ public interface DataprocHadoopRunner {
 
   interface Builder {
 
+    /**
+     * Specify a property key-value pair that will be set on all jobs.
+     *
+     * @param key    Property key
+     * @param value  Property value
+     * @return This builder
+     */
     Builder withProperty(String key, String value);
 
+    /**
+     * Specify property key-value pairs that will be set on all jobs.
+     *
+     * @param properties  Properties map
+     * @return This builder
+     */
     Builder withProperties(Map<String, String> properties);
 
+    /**
+     *  Specify which {@link CredentialProvider} to use when interacting with Google APIs.
+     *
+     * @param credentialProvider  The credential provider to use
+     * @return This builder
+     */
     Builder withCredentialProvider(CredentialProvider credentialProvider);
 
+    /**
+     * Create a {@link DataprocHadoopRunner} with configuration specified by this builder.
+     *
+     * @return A new instance of DataprocHadoopRunner
+     */
     DataprocHadoopRunner build();
   }
 }
