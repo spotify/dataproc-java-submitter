@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -62,14 +63,11 @@ public class DataprocLambdaRunner {
 
     final Path continuationFilePath = ContinuationEntryPoint.serializeContinuation(fn);
 
-    final List<String> jarPaths = localClasspath().stream()
+    final List<String> jars = localClasspath().stream()
         .map(entry -> Paths.get(URI.create(entry.getUrl())).toAbsolutePath().toString())
         .collect(Collectors.toList());
-    final List<String> jars =
-        Stream.concat(
-            jarPaths.stream(),
-            Stream.of(continuationFilePath.toAbsolutePath().toString()))
-            .collect(Collectors.toList());
+    final List<String> files = Collections.singletonList(
+        continuationFilePath.toAbsolutePath().toString());
 
     LOG.debug("Jars:");
     jars.forEach(LOG::debug);
@@ -77,6 +75,7 @@ public class DataprocLambdaRunner {
     final Job job = Job.builder()
         .setMainClass(ContinuationEntryPoint.class.getCanonicalName())
         .setShippedJars(jars.toArray(new String[jars.size()]))
+        .setShippedFiles(files.toArray(new String[files.size()]))
         .createJob();
 
     dataproc.submit(job);
