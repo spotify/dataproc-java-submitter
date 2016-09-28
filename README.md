@@ -22,7 +22,19 @@ deserialize it.
 This library aims to more seamlessly bridge between a local JVM instance and the Hadoop
 application entrypoint.
 
-## RFC: Usage
+## Usage
+
+### Maven dependency
+
+```xml
+<dependency>
+  <groupId>com.spotify</groupId>
+  <artifactId>dataproc-java-submitter</artifactId>
+  <version>0.1.1</version>
+</dependency>
+```
+
+### Example usage
 
 ```java
 String project = "gcp-project-id";
