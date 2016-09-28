@@ -7,13 +7,13 @@
 
   <groupId>com.spotify</groupId>
   <artifactId>dataproc-java-submitter</artifactId>
-  <version>0.1.1-SNAPSHOT</version>
+  <version>0.1.1</version>
 
   <scm>
     <url>https://github.com/spotify/dataproc-java-submitter</url>
     <connection>scm:git:git@github.com:spotify/dataproc-java-submitter.git</connection>
     <developerConnection>scm:git:git@github.com:spotify/dataproc-java-submitter.git</developerConnection>
-    <tag>HEAD</tag>
+    <tag>v0.1.1</tag>
   </scm>
 
   <dependencies>
