@@ -29,27 +29,32 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collection;
+import java.util.Objects;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.lang.System.getenv;
+/**
+ * A {@link CredentialProvider} that loads credentials from a resource file.
+ */
+public class ResourceCredentialProvider implements CredentialProvider{
 
-public class GoogleCredentialProvider implements CredentialProvider {
+  private static final Logger logger = LoggerFactory.getLogger(ResourceCredentialProvider.class);
 
-  private static final Logger logger = LoggerFactory.getLogger(GoogleCredentialProvider.class);
+  private static final String DEFAULT_RESOURCE_NAME = "key.json";
 
-  private static final String GOOGLE_APPLICATION_CREDENTIALS =
-      getenv("GOOGLE_APPLICATION_CREDENTIALS");
-
-  private static final String KEY_JSON = "key.json";
+  private final String resourceName;
 
   private GoogleCredential credential = null;
 
+  public ResourceCredentialProvider() {
+    this(DEFAULT_RESOURCE_NAME);
+  }
+
+  public ResourceCredentialProvider(String resourceName) {
+    this.resourceName = Objects.requireNonNull(resourceName);
+  }
+
   @Override
-  public GoogleCredential getCredential(final Collection<String> scopes) {
+  public GoogleCredential getCredential(Collection<String> scopes) {
     if (credential == null) {
       try {
         loadCredential();
@@ -67,24 +72,14 @@ public class GoogleCredentialProvider implements CredentialProvider {
       return;
     }
 
-    final InputStream credentialStream;
-    if (!isNullOrEmpty(GOOGLE_APPLICATION_CREDENTIALS)) {
-      credentialStream = getCredentialStreamFromPath(Paths.get(GOOGLE_APPLICATION_CREDENTIALS));
-    } else {
-      credentialStream = getCredentialStreamFromResource(Resources.getResource(KEY_JSON));
-    }
+    final InputStream credentialStream =
+        getCredentialStreamFromResource(Resources.getResource(resourceName));
 
     credential = GoogleCredential.fromStream(credentialStream);
   }
 
-  private static InputStream getCredentialStreamFromPath(final Path credentialPath)
-      throws IOException {
-    return Files.newInputStream(credentialPath);
-  }
-
-  private static InputStream getCredentialStreamFromResource(final URL resourceUrl)
+  private static InputStream getCredentialStreamFromResource(URL resourceUrl)
       throws IOException {
     return Resources.asByteSource(resourceUrl).openStream();
   }
-
 }
