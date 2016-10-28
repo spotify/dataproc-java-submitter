@@ -55,10 +55,33 @@ lambdaRunner.runOnCluster(() -> {
 });
 ```
 
-## Implementation
+The `DataprocLambdaRunner` will take care of configuring the Dataproc job so that it can
+run your lambda function. It will scan you local classpath and ensure that the loaded 
+jars are staged and configured for the Dataproc job. It will also take care of serializing,
+staging and deserializing the lambda closure that is to be invoked on the cluster.
 
-The current implementation is based on an internal Spotify project called Hydra. This
-repository is currently empty as we're in the process of separating some of the internal
-project from the reusable parts that are needed for this library.
+_Note that anything referenced from the lambda has to implement `java.io.Serializable`_
+
+### Low level usage
+
+This library can also be used to configure the Dataproc job directly.
+
+```java
+String project = "gcp-project-id";
+String cluster = "dataproc-cluster-id";
+
+DataprocHadoopRunner hadoopRunner = DataprocHadoopRunner.builder(project, cluster).build();
+
+Job job = Job.builder()
+    .setMainClass(...)
+    .setArgs(...)
+    .setProperties(...)
+    .setShippedJars(...)
+    .setShippedFiles(...)
+    .createJob();
+
+
+hadoopRunner.submit(job);
+```
 
 [Google Cloud Dataproc]: https://cloud.google.com/dataproc/
