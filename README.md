@@ -57,7 +57,7 @@ lambdaRunner.runOnCluster(() -> {
 ```
 
 The `DataprocLambdaRunner` will take care of configuring the Dataproc job so that it can
-run your lambda function. It will scan you local classpath and ensure that the loaded 
+run your lambda function. It will scan your local classpath and ensure that the loaded 
 jars are staged and configured for the Dataproc job. It will also take care of serializing,
 staging and deserializing the lambda closure that is to be invoked on the cluster.
 
