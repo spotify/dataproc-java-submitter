@@ -90,7 +90,7 @@ class DataprocHadoopRunnerImpl implements DataprocHadoopRunner {
     @Override
     public DataprocHadoopRunner build() {
       CredentialProvider credentialProvider = Optional.ofNullable(this.credentialProvider)
-          .orElseGet(GoogleCredentialProvider::new);
+          .orElseGet(DefaultCredentialProvider::new);
 
       try {
         final HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
